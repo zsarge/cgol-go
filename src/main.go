@@ -18,6 +18,14 @@ func (s square) show() {
 	fmt.Print(s)
 }
 
+func (s *square) invert() {
+	if *s == Alive {
+		*s = Dead
+	} else {
+		*s = Alive
+	}
+}
+
 func (s square) String() string {
 	if s == Alive {
 		return "X"
@@ -72,6 +80,10 @@ func (b *board) get(x, y int) square {
 	return b.squares[y][x]
 }
 
+func (b *board) getRef(x, y int) *square {
+	return &b.squares[y][x]
+}
+
 func main() {
 	b := new(board)
 	b.init(10, 10)
@@ -79,6 +91,8 @@ func main() {
 	b.set(4, 5, Alive)
 	b.set(5, 4, Alive)
 	b.set(5, 5, Alive)
-	fmt.Println(b.get(5, 5))
+	b.show()
+	b.getRef(5,5).invert()
+	fmt.Println("invert")
 	b.show()
 }
