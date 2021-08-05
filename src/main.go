@@ -84,6 +84,15 @@ func (b *board) getRef(x, y int) *square {
 	return &b.squares[y][x]
 }
 
+// Progress the board one frame
+func (b *board) tick() {
+	for y, line := range b.squares {
+		for x := range line {
+			b.squares[y][x].invert()
+		}
+	}
+}
+
 func main() {
 	b := new(board)
 	b.init(10, 10)
@@ -94,5 +103,8 @@ func main() {
 	b.show()
 	b.getRef(5,5).invert()
 	fmt.Println("invert")
+	b.show()
+	fmt.Println("tick")
+	b.tick()
 	b.show()
 }
