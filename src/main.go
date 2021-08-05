@@ -9,7 +9,7 @@ type square bool
 // a square can be alive or dead
 const (
 	Alive square = true
-	Dead square = false
+	Dead  square = false
 )
 
 func (s square) display() {
@@ -21,8 +21,8 @@ func (s square) display() {
 }
 
 type board struct {
-	height int
-	width int
+	height  int
+	width   int
 	squares [][]square
 }
 
@@ -32,7 +32,7 @@ func (b *board) init(height, width int) {
 
 	b.squares = make([][]square, height)
 	for i := 0; i < height; i++ {
-		    b.squares[i] = make([]square, width)
+		b.squares[i] = make([]square, width)
 	}
 }
 
@@ -56,10 +56,16 @@ func (b board) display() {
 	b.printHeader()
 }
 
+func (b *board) set(x, y int, value square) {
+	b.squares[y][x] = value
+}
 
 func main() {
 	b := new(board)
-	b.init(10,10)
+	b.init(10, 10)
+	b.set(4, 4, Alive)
+	b.set(4, 5, Alive)
+	b.set(5, 4, Alive)
+	b.set(5, 5, Alive)
 	b.display()
 }
-
