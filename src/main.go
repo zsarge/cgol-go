@@ -41,15 +41,20 @@ type board struct {
 	height  int
 	width   int
 	squares [][]square
+	nextSquares [][]square
 }
 
-func (b *board) init(height, width int) {
+func (b *board) init(width, height int) {
 	b.height = height
 	b.width = width
 
 	b.squares = make([][]square, height)
 	for i := 0; i < height; i++ {
 		b.squares[i] = make([]square, width)
+	}
+	b.nextSquares = make([][]square, height)
+	for i := 0; i < height; i++ {
+		b.nextSquares[i] = make([]square, width)
 	}
 }
 
@@ -81,6 +86,10 @@ func (b board) setActive(arr [][]int) {
 
 func (b *board) set(x, y int, value square) {
 	b.squares[y][x] = value
+}
+
+func (b *board) setNext(x, y int, value square) {
+	b.nextSquares[y][x] = value
 }
 
 func (b *board) get(x, y int) square {
@@ -133,21 +142,23 @@ func (b *board) applyRules(x, y int) {
 
 	// Any live cell
 	if b.get(x, y) {
-		// with fewer than two live neighbours
-		if n < 2 {
+		if n < 2 { // with fewer than two live neighbours
 			// dies, as if by underpopulation.
-			b.set(x, y, Dead)
-		}
-		// with more than three live neighbours
-		if n > 3 {
+			b.setNext(x, y, Dead)
+		} else if n > 3 { // with more than three live neighbours
 			// dies, as if by overpopulation.
-			b.set(x, y, Dead)
+			b.setNext(x, y, Dead)
+		} else { // with two or three live neighbours 
+			// lives on to the next generation.
+			b.setNext(x, y, Alive)
 		}
 	} else {
 		// Any dead cell with exactly three live neighbours
 		// becomes a live cell, as if by reproduction.
 		if n == 3 {
-			b.set(x, y, Alive)
+			b.setNext(x, y, Alive)
+		} else {
+			b.setNext(x, y, Dead)
 		}
 	}
 }
@@ -159,37 +170,30 @@ func (b board) tick() {
 			b.applyRules(x, y)
 		}
 	}
+
+	// copy over from next squares
+	for y, line := range b.nextSquares {
+		for x := range line {
+			b.squares[y][x] = b.nextSquares[y][x]
+		}
+	}
 }
 
 func main() {
 	b := new(board)
-	b.init(10, 10)
+	b.init(80, 10)
 	b.setActive([][]int{
-		// around (5,5):
-		[]int{4, 4},
-		[]int{5, 4},
-		[]int{4, 5},
-		[]int{6, 5},
+		[]int{5, 5},
 		[]int{6, 6},
-		[]int{5, 6},
-		[]int{6, 4},
-		[]int{4, 6},
-		[]int{4, 8},
-		//// around (0,0):
-		// []int{0, 9},
-		// []int{0, 1},
-		// []int{1, 0},
-		// []int{1, 1},
-		// []int{1, 9},
-		// []int{9, 0},
-		// []int{9, 1},
-		// []int{9, 9},
+		[]int{6, 7},
+		[]int{5, 7},
+		[]int{4, 7},
 	})
 	b.show()
 
-	for  {
+	for {
 		b.tick()
 		b.show()
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
