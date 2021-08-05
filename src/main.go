@@ -83,18 +83,66 @@ func (b *board) set(x, y int, value square) {
 }
 
 func (b *board) get(x, y int) square {
+	if y < 0 {
+		y = b.height + y
+	}
+	if x < 0 {
+		x = b.width + x
+	}
 	return b.squares[y][x]
 }
 
 func (b *board) getRef(x, y int) *square {
+	if y < 0 {
+		y = b.height + y
+	}
+	if x < 0 {
+		x = b.width + x
+	}
 	return &b.squares[y][x]
 }
 
+// Apply the rules to one square
+func (b *board) getNumberOfNeighbors(x, y int) int {
+	n := 0
+	// starting from top left, going clockwise
+	if b.get(x-1, y+1) {
+		n++
+	}
+	if b.get(x, y+1) {
+		n++
+	}
+	if b.get(x+1, y+1) {
+		n++
+	}
+	if b.get(x+1, y) {
+		n++
+	}
+	if b.get(x+1, y-1) {
+		n++
+	}
+	if b.get(x, y-1) {
+		n++
+	}
+	if b.get(x-1, y-1) {
+		n++
+	}
+	if b.get(x-1, y) {
+		n++
+	}
+	return n
+}
+
+// Apply the rules to one square
+func (b *board) applyRules(x, y int) {
+	fmt.Println("Rules: ", x, y)
+}
+
 // Progress the board one frame
-func (b *board) tick() {
+func (b board) tick() {
 	for y, line := range b.squares {
 		for x := range line {
-			b.squares[y][x].invert()
+			b.applyRules(x, y)
 		}
 	}
 }
@@ -106,13 +154,12 @@ func main() {
 		[]int{4, 4},
 		[]int{5, 4},
 		[]int{4, 5},
-		[]int{5, 5},
+		[]int{6, 5},
+		[]int{6, 6},
+		[]int{5, 6},
+		[]int{6, 4},
+		[]int{4, 6},
 	})
 	b.show()
-	b.getRef(5, 5).invert()
-	fmt.Println("invert")
-	b.show()
-	fmt.Println("tick")
-	b.tick()
-	b.show()
+	fmt.Println("5, 5 has ", b.getNumberOfNeighbors(5,5), " neighbors")
 }
