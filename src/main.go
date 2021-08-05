@@ -72,6 +72,12 @@ func (b board) show() {
 	b.printHeader()
 }
 
+func (b board) setActive(arr [][]int) {
+	for y := range arr {
+		b.set(arr[y][0], arr[y][1], Alive)
+	}
+}
+
 func (b *board) set(x, y int, value square) {
 	b.squares[y][x] = value
 }
@@ -96,12 +102,14 @@ func (b *board) tick() {
 func main() {
 	b := new(board)
 	b.init(10, 10)
-	b.set(4, 4, Alive)
-	b.set(4, 5, Alive)
-	b.set(5, 4, Alive)
-	b.set(5, 5, Alive)
+	b.setActive([][]int{
+		[]int{4, 4},
+		[]int{5, 4},
+		[]int{4, 5},
+		[]int{5, 5},
+	})
 	b.show()
-	b.getRef(5,5).invert()
+	b.getRef(5, 5).invert()
 	fmt.Println("invert")
 	b.show()
 	fmt.Println("tick")
