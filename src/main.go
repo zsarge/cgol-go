@@ -105,30 +105,23 @@ func (b *board) getRef(x, y int) *square {
 // Apply the rules to one square
 func (b *board) getNumberOfNeighbors(x, y int) int {
 	n := 0
-	// starting from top left, going clockwise
-	if b.get(x-1, y+1) {
-		n++
-	}
-	if b.get(x, y+1) {
-		n++
-	}
-	if b.get(x+1, y+1) {
-		n++
-	}
-	if b.get(x+1, y) {
-		n++
-	}
-	if b.get(x+1, y-1) {
-		n++
-	}
-	if b.get(x, y-1) {
-		n++
-	}
-	if b.get(x-1, y-1) {
-		n++
-	}
-	if b.get(x-1, y) {
-		n++
+	// dx and dy are deltas from the given (x, y) point,
+	// Here is a graph:
+	/*
+		(x-1, y-1) | (x, y-1) | (x+1, y-1)
+		(x-1, y  ) | (x, y  ) | (x+1, y  )
+		(x-1, y+1) | (x, y+1) | (x+1, y+1)
+	*/
+	for dx := -1; dx <= 1; dx++ {
+		for dy := -1; dy <= 1; dy++ {
+			// make sure we don't count the square we're checking around
+			if x+dx != x || y+dy != y {
+				// count alive squares
+				if b.get(x+dx, y+dy) {
+					n++
+				}
+			}
+		}
 	}
 	return n
 }
@@ -154,6 +147,7 @@ func main() {
 		[]int{4, 4},
 		[]int{5, 4},
 		[]int{4, 5},
+		[]int{5, 5},
 		[]int{6, 5},
 		[]int{6, 6},
 		[]int{5, 6},
@@ -161,5 +155,5 @@ func main() {
 		[]int{4, 6},
 	})
 	b.show()
-	fmt.Println("5, 5 has ", b.getNumberOfNeighbors(5,5), " neighbors")
+	fmt.Println("5, 5 has ", b.getNumberOfNeighbors(5, 5), " neighbors")
 }
