@@ -144,16 +144,26 @@ func main() {
 	b := new(board)
 	b.init(10, 10)
 	b.setActive([][]int{
+		// around (5,5):
 		[]int{4, 4},
 		[]int{5, 4},
 		[]int{4, 5},
-		[]int{5, 5},
 		[]int{6, 5},
 		[]int{6, 6},
 		[]int{5, 6},
 		[]int{6, 4},
 		[]int{4, 6},
+		// around (0,0):
+		[]int{0, 9},
+		[]int{0, 1},
+		[]int{1, 0},
+		[]int{1, 1},
+		[]int{1, 9},
+		[]int{9, 0},
+		[]int{9, 1},
+		[]int{9, 9},
 	})
 	b.show()
-	fmt.Println("5, 5 has ", b.getNumberOfNeighbors(5, 5), " neighbors")
+	fmt.Println("5, 5 has", b.getNumberOfNeighbors(5, 5), "neighbors")
+	fmt.Println("0, 0 has", b.getNumberOfNeighbors(0, 0), "neighbors")
 }
