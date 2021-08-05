@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+/* Square stuff */
+
 type square bool
 
 // a square can be alive or dead
@@ -12,13 +14,19 @@ const (
 	Dead  square = false
 )
 
-func (s square) display() {
+func (s square) show() {
+	fmt.Print(s)
+}
+
+func (s square) String() string {
 	if s == Alive {
-		fmt.Print("X")
+		return "X"
 	} else {
-		fmt.Print(" ")
+		return " "
 	}
 }
+
+/* Board stuff */
 
 type board struct {
 	height  int
@@ -44,12 +52,12 @@ func (b board) printHeader() {
 	fmt.Println("+")
 }
 
-func (b board) display() {
+func (b board) show() {
 	b.printHeader()
 	for y := 0; y < b.height; y++ {
 		fmt.Print("|")
 		for x := 0; x < b.width; x++ {
-			b.squares[y][x].display()
+			b.squares[y][x].show()
 		}
 		fmt.Println("|")
 	}
@@ -60,6 +68,10 @@ func (b *board) set(x, y int, value square) {
 	b.squares[y][x] = value
 }
 
+func (b *board) get(x, y int) square {
+	return b.squares[y][x]
+}
+
 func main() {
 	b := new(board)
 	b.init(10, 10)
@@ -67,5 +79,6 @@ func main() {
 	b.set(4, 5, Alive)
 	b.set(5, 4, Alive)
 	b.set(5, 5, Alive)
-	b.display()
+	fmt.Println(b.get(5, 5))
+	b.show()
 }
