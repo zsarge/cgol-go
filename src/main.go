@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 /* Square stuff */
@@ -83,13 +84,7 @@ func (b *board) set(x, y int, value square) {
 }
 
 func (b *board) get(x, y int) square {
-	if y < 0 {
-		y = b.height + y
-	}
-	if x < 0 {
-		x = b.width + x
-	}
-	return b.squares[y][x]
+	return *b.getRef(x, y)
 }
 
 func (b *board) getRef(x, y int) *square {
@@ -98,6 +93,12 @@ func (b *board) getRef(x, y int) *square {
 	}
 	if x < 0 {
 		x = b.width + x
+	}
+	if y >= b.height {
+		y = b.height - y
+	}
+	if x >= b.width {
+		x = b.width - x
 	}
 	return &b.squares[y][x]
 }
@@ -128,7 +129,27 @@ func (b *board) getNumberOfNeighbors(x, y int) int {
 
 // Apply the rules to one square
 func (b *board) applyRules(x, y int) {
-	fmt.Println("Rules: ", x, y)
+	n := b.getNumberOfNeighbors(x, y)
+
+	// Any live cell
+	if b.get(x, y) {
+		// with fewer than two live neighbours
+		if n < 2 {
+			// dies, as if by underpopulation.
+			b.set(x, y, Dead)
+		}
+		// with more than three live neighbours
+		if n > 3 {
+			// dies, as if by overpopulation.
+			b.set(x, y, Dead)
+		}
+	} else {
+		// Any dead cell with exactly three live neighbours
+		// becomes a live cell, as if by reproduction.
+		if n == 3 {
+			b.set(x, y, Alive)
+		}
+	}
 }
 
 // Progress the board one frame
@@ -153,17 +174,22 @@ func main() {
 		[]int{5, 6},
 		[]int{6, 4},
 		[]int{4, 6},
-		// around (0,0):
-		[]int{0, 9},
-		[]int{0, 1},
-		[]int{1, 0},
-		[]int{1, 1},
-		[]int{1, 9},
-		[]int{9, 0},
-		[]int{9, 1},
-		[]int{9, 9},
+		[]int{4, 8},
+		//// around (0,0):
+		// []int{0, 9},
+		// []int{0, 1},
+		// []int{1, 0},
+		// []int{1, 1},
+		// []int{1, 9},
+		// []int{9, 0},
+		// []int{9, 1},
+		// []int{9, 9},
 	})
 	b.show()
-	fmt.Println("5, 5 has", b.getNumberOfNeighbors(5, 5), "neighbors")
-	fmt.Println("0, 0 has", b.getNumberOfNeighbors(0, 0), "neighbors")
+
+	for  {
+		b.tick()
+		b.show()
+		time.Sleep(500 * time.Millisecond)
+	}
 }
