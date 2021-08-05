@@ -38,9 +38,9 @@ func (s square) String() string {
 /* Board stuff */
 
 type board struct {
-	height  int
-	width   int
-	squares [][]square
+	height      int
+	width       int
+	squares     [][]square
 	nextSquares [][]square
 }
 
@@ -52,6 +52,7 @@ func (b *board) init(width, height int) {
 	for i := 0; i < height; i++ {
 		b.squares[i] = make([]square, width)
 	}
+
 	b.nextSquares = make([][]square, height)
 	for i := 0; i < height; i++ {
 		b.nextSquares[i] = make([]square, width)
@@ -88,6 +89,7 @@ func (b *board) set(x, y int, value square) {
 	b.squares[y][x] = value
 }
 
+// seperate buffer generated from current state:
 func (b *board) setNext(x, y int, value square) {
 	b.nextSquares[y][x] = value
 }
@@ -97,6 +99,7 @@ func (b *board) get(x, y int) square {
 }
 
 func (b *board) getRef(x, y int) *square {
+	// wrap board like a torus
 	if y < 0 {
 		y = b.height + y
 	}
@@ -148,7 +151,7 @@ func (b *board) applyRules(x, y int) {
 		} else if n > 3 { // with more than three live neighbours
 			// dies, as if by overpopulation.
 			b.setNext(x, y, Dead)
-		} else { // with two or three live neighbours 
+		} else { // with two or three live neighbours
 			// lives on to the next generation.
 			b.setNext(x, y, Alive)
 		}
@@ -165,13 +168,14 @@ func (b *board) applyRules(x, y int) {
 
 // Progress the board one frame
 func (b board) tick() {
+	// generate next frame
 	for y, line := range b.squares {
 		for x := range line {
 			b.applyRules(x, y)
 		}
 	}
 
-	// copy over from next squares
+	// copy over from frame buffer
 	for y, line := range b.nextSquares {
 		for x := range line {
 			b.squares[y][x] = b.nextSquares[y][x]
