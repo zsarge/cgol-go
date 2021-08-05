@@ -15,18 +15,7 @@ const (
 	Dead  square = false
 )
 
-func (s square) show() {
-	fmt.Print(s)
-}
-
-func (s *square) invert() {
-	if *s == Alive {
-		*s = Dead
-	} else {
-		*s = Alive
-	}
-}
-
+// convert to string
 func (s square) String() string {
 	if s == Alive {
 		return "X"
@@ -72,7 +61,7 @@ func (b board) show() {
 	for y := 0; y < b.height; y++ {
 		fmt.Print("|")
 		for x := 0; x < b.width; x++ {
-			b.squares[y][x].show()
+			fmt.Print(b.squares[y][x])
 		}
 		fmt.Println("|")
 	}
