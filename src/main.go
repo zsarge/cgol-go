@@ -84,10 +84,6 @@ func (b *board) setNext(x, y int, value square) {
 }
 
 func (b *board) get(x, y int) square {
-	return *b.getRef(x, y)
-}
-
-func (b *board) getRef(x, y int) *square {
 	// wrap board like a torus
 	if y < 0 {
 		y = b.height + y
@@ -101,7 +97,7 @@ func (b *board) getRef(x, y int) *square {
 	if x >= b.width {
 		x = b.width - x
 	}
-	return &b.squares[y][x]
+	return b.squares[y][x]
 }
 
 // Apply the rules to one square
