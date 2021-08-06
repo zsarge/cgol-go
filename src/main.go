@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -168,9 +169,23 @@ func (b board) tick() {
 	}
 }
 
+func (b board) randomize() {
+	s := rand.NewSource(time.Now().UnixNano())
+	for y, line := range b.squares {
+		for x := range line {
+			r := rand.New(s)
+			if r.Intn(2) == 1 {
+				b.set(x, y, Alive)
+			}
+		}
+	}
+}
+
 func main() {
 	b := new(board)
 	b.init(80, 10)
+
+	// Glider:
 	b.setActive([][]int{
 		[]int{5, 5},
 		[]int{6, 6},
@@ -178,6 +193,9 @@ func main() {
 		[]int{5, 7},
 		[]int{4, 7},
 	})
+	// random start:
+	b.randomize()
+
 	b.show()
 
 	for {
