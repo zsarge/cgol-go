@@ -181,8 +181,11 @@ func main() {
 	b.show()
 
 	for {
+		t0 := time.Now()
 		b.tick()
+		t1 := time.Now()
 		b.show()
+		fmt.Println("frame generated in", t1.Sub(t0))
 		time.Sleep(100 * time.Millisecond)
 	}
 }
