@@ -83,7 +83,7 @@ func (b *board) setNext(x, y int, value square) {
 	b.nextSquares[y][x] = value
 }
 
-func (b *board) get(x, y int) square {
+func (b board) get(x, y int) square {
 	// wrap board like a torus
 	if y < 0 {
 		y = b.height + y
@@ -101,7 +101,7 @@ func (b *board) get(x, y int) square {
 }
 
 // Apply the rules to one square
-func (b *board) getNumberOfNeighbors(x, y int) int {
+func (b board) getNumberOfNeighbors(x, y int) int {
 	n := 0
 	// dx and dy are deltas from the given (x, y) point,
 	// Here is a graph:
@@ -125,7 +125,7 @@ func (b *board) getNumberOfNeighbors(x, y int) int {
 }
 
 // Apply the rules to one square
-func (b *board) applyRules(x, y int) {
+func (b board) applyRules(x, y int) {
 	n := b.getNumberOfNeighbors(x, y)
 
 	// Any live cell
